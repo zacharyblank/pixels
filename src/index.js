@@ -1,48 +1,48 @@
 require('./colors')
 require('tracking')
 require('tracking/build/data/face-min.js')
-var Layer = require('./layer')
 
-var layerCount = 15;
+// How many color layers
+var layerCount 	= 15;
 
-var layers = new Array(layerCount)
+var layers 		= new Array(layerCount)
+var img 		= document.getElementById("sourceImage");
+var canvas 		= document.createElement("canvas")
+var video 		= document.createElement("video")
+var tracker 	= new tracking.ObjectTracker('face');
+var image 		= new Image();
 
-var img = document.getElementById("sourceImage");
-// Create initial canvas to read the image data
-var canvas = document.createElement("canvas")
-var video = document.createElement("video")
 
-canvas.width = img.width
-canvas.height = img.height
-video.width = 320
-video.height = 240
-video.id = "video"
-video.preload = true
-video.autoplay = true
-video.loop = true
-video.muted = true
+var setup = function() {
+	canvas.width 	= img.width
+	canvas.height 	= img.height
+	
+	video.width 	= 320
+	video.height 	= 240
+	video.id 		= "video"
+	video.preload 	= true
+	video.autoplay 	= true
+	video.loop 		= true
+	video.muted 	= true
 
-var ratioX = canvas.width / video.width
-var ratioY = canvas.height / video.height
+	image.src = img.src;
 
-document.body.appendChild(canvas);
-document.body.appendChild(video);
+	tracker.setInitialScale(4);
+	tracker.setStepSize(2);
+	tracker.setEdgesDensity(0.1);
 
-var context = canvas.getContext('2d');
-var colors = new Colors(canvas, context)
-
-var tracker = new tracking.ObjectTracker('face');
-tracker.setInitialScale(4);
-tracker.setStepSize(2);
-tracker.setEdgesDensity(0.1);
-
-tracking.track('#video', tracker, {
-	camera: true
-});
-
-var image = new Image();
+	document.body.appendChild(canvas);
+	document.body.appendChild(video);
+}
 
 image.onload = function() {
+	var Layer 		= require('./layer')
+	var context 	= canvas.getContext('2d');
+	var colors 		= new Colors(canvas, context)
+	var ratioX 		= canvas.width / video.width
+	var ratioY 		= canvas.height / video.height
+
+
 	context.drawImage(image, 0, 0);
 	imageData = context.getImageData(0, 0, img.width, img.height);
 
@@ -103,4 +103,15 @@ image.onload = function() {
 	})
 }
 
-image.src = img.src;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // Not adding `{ audio: true }` since we only want video now
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+    	tracking.track('#video', tracker, {
+			camera: true
+		});
+    }, function() {
+    	alert('Please allow camera access and reload the page')
+    });
+}
+
+setup()
