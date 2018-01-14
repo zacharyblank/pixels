@@ -37,5 +37,5 @@ app.use(function(err, req, res, next) {
  * Start server
  */
 app.listen(env.node_port, function() {
-    console.log('listening on port %d using %s ', env.node_port);
+    console.log('listening on port %d ', env.node_port);
 });
