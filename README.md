@@ -9,6 +9,7 @@ I wanted to add an image uploader so the user could easily upload their own imag
 ## Credits
 
 - Tracking.js (https://trackingjs.com/)
+- Color Thief (https://github.com/lokesh/color-thief)
 - Gulp build boilerplate (I developed this over the last couple of years and copied parts to this project to save time.)
 
 ## Build
